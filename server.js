@@ -12,11 +12,18 @@ const JWT_SECRET = 'your_jwt_secret_key_change_in_production'; // Simple secret 
 
 app.use(cors());
 app.use(express.json());
+const fs = require('fs');
+
+// Ensure uploads directory exists on Render
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', 'uploads'))
+    cb(null, path.join(__dirname, 'uploads'))
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -31,7 +38,7 @@ app.use('/admin', express.static(path.join(__dirname, '..', 'admin'), {
 }));
 
 // Serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static files from the parent directory (frontend files)
 app.use(express.static(path.join(__dirname, '..'), {
@@ -78,7 +85,7 @@ app.get('/api/content', (req, res) => {
 
 // API: Update content
 app.put('/api/content', authenticateToken, (req, res) => {
-    const data = req.body; // Expects { hero_title: '...', about_title: '...' }
+    const data = req.body; 
     
     // We update each key sequentially
     const stmt = db.prepare("UPDATE content SET value = ? WHERE key = ?");
