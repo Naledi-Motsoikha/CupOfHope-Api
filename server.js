@@ -27,7 +27,7 @@ const upload = multer({ storage: storage });
 
 // Serve admin files
 app.use('/admin', express.static(path.join(__dirname, '..', 'admin'), {
-    index: ['admin.html']
+    index: ['index.html']
 }));
 
 // Serve uploaded images
@@ -58,7 +58,7 @@ app.post('/api/upload', authenticateToken, upload.single('image'), (req, res) =>
         return res.status(400).json({ error: 'No file uploaded' });
     }
     // Return the URL for the uploaded file
-    res.json({ url: '/uploads/' + req.file.filename });
+    res.json({ url: 'https://cupofhope-api.onrender.com/uploads/' + req.file.filename });
 });
 
 // API: Get all content
